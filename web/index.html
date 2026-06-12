@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rapport TP — Images Hybrides · Partie 1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink: #1a1a18; --paper: #f5f2eb; --cream: #ede9df; --rule: #c8c2b4;
+      --accent: #2d5a3d; --accent2: #8b3a2a; --muted: #7a7568; --light-bg: #eeeadf;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Crimson Pro', serif; font-size: 18px; line-height: 1.75; color: var(--ink); background: var(--paper); max-width: 960px; margin: 0 auto; padding: 0 2rem 6rem; }
+    header { border-bottom: 2px solid var(--ink); padding: 3.5rem 0 2rem; margin-bottom: 3rem; position: relative; }
+    .course-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.8rem; }
+    header h1 { font-size: 2.6rem; font-weight: 300; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 0.4rem; }
+    header h1 em { font-style: italic; color: var(--accent); }
+    .header-meta { display: flex; gap: 2.5rem; margin-top: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--muted); }
+    .header-meta span { display: flex; flex-direction: column; gap: 0.15rem; }
+    .header-meta strong { color: var(--ink); font-weight: 500; }
+    nav { background: var(--cream); border: 1px solid var(--rule); padding: 1.2rem 1.8rem; margin-bottom: 3.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; }
+    nav .nav-title { text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); margin-bottom: 0.6rem; font-size: 0.62rem; }
+    nav ol { padding-left: 1.2rem; }
+    nav li { margin: 0.3rem 0; }
+    nav a { color: var(--accent); text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    section { margin-bottom: 4rem; }
+    h2 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 1.2rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--rule); display: flex; align-items: baseline; gap: 0.8rem; }
+    h2 .sec-num { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--muted); font-weight: 400; letter-spacing: 0.05em; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin: 2rem 0 0.8rem; color: var(--accent); }
+    p { margin-bottom: 1rem; text-align: justify; }
+    .score-badge { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; background: var(--accent); color: white; padding: 0.2em 0.6em; margin-left: 0.5rem; vertical-align: middle; letter-spacing: 0.08em; }
+    .img-grid { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin: 1.8rem 0; }
+    .img-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .img-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .img-cell { background: var(--cream); padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
+    .img-grid.cols-3 .img-cell img { width: 100%; max-height: 240px; object-fit: contain; display: block; background: #222; }
+    .img-grid.cols-2 .img-cell img { width: 100%; max-height: 520px; object-fit: contain; display: block; background: #222; }
+    .img-grid.piles { grid-template-columns: 1fr !important; }
+    .img-grid.piles .img-cell img { width: 100%; max-height: none; height: auto; object-fit: contain; display: block; background: #222; }
+    .process-img { width: auto !important; max-width: 100%; max-height: 420px !important; object-fit: contain; display: block; margin: 0 auto; background: #222; }
+    .img-cell .img-label { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); text-align: center; }
+    .img-cell .img-sublabel { font-size: 0.8rem; font-style: italic; color: var(--muted); text-align: center; }
+    .fig-caption { font-size: 0.88rem; font-style: italic; color: var(--muted); text-align: center; margin-top: 0.4rem; margin-bottom: 1.8rem; line-height: 1.5; }
+    .fig-caption strong { font-style: normal; font-weight: 600; color: var(--ink); }
+    .params-box { background: var(--cream); border-left: 3px solid var(--accent); padding: 1rem 1.4rem; margin: 1.5rem 0; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
+    .params-box .params-title { text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.62rem; color: var(--muted); margin-bottom: 0.6rem; }
+    .params-row { display: flex; gap: 2rem; flex-wrap: wrap; }
+    .param { display: flex; flex-direction: column; gap: 0.1rem; }
+    .param-key { color: var(--muted); font-size: 0.68rem; }
+    .param-val { color: var(--accent); font-weight: 500; }
+    .fft-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin: 1.8rem 0; }
+    .fft-cell { background: var(--light-bg); padding: 0.8rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+    .fft-cell img { width: 100%; max-height: 200px; object-fit: contain; }
+    .fft-cell.dark { background: #111; }
+    .fft-cell.full-width { grid-column: 1 / -1; }
+    .fft-label { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); text-align: center; }
+    .fft-cell.dark .fft-label { color: #666; }
+    .callout { border: 1px solid var(--rule); border-left: 3px solid var(--accent2); background: var(--cream); padding: 1rem 1.4rem; margin: 1.5rem 0; font-size: 0.92rem; }
+    .callout-title { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent2); margin-bottom: 0.5rem; }
+    .obs-list { list-style: none; margin: 1rem 0 1.5rem; padding: 0; }
+    .obs-list li { padding: 0.6rem 0 0.6rem 1.8rem; border-bottom: 1px solid var(--rule); position: relative; font-size: 0.95rem; }
+    .obs-list li:last-child { border-bottom: none; }
+    .obs-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+    .ref-list { list-style: none; padding: 0; font-size: 0.9rem; }
+    .ref-list li { padding: 0.5rem 0 0.5rem 2rem; border-bottom: 1px solid var(--rule); position: relative; color: var(--muted); }
+    .ref-list li::before { content: attr(data-ref); position: absolute; left: 0; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent); }
+    footer { border-top: 2px solid var(--ink); padding-top: 1.5rem; margin-top: 5rem; display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.08em; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    section { animation: fadeUp 0.5s ease both; }
+    section:nth-child(1) { animation-delay: 0.05s; }
+    section:nth-child(2) { animation-delay: 0.15s; }
+    section:nth-child(3) { animation-delay: 0.25s; }
+    section:nth-child(4) { animation-delay: 0.35s; }
+    @media (max-width: 640px) {
+      .img-grid.cols-3, .img-grid.cols-2 { grid-template-columns: 1fr; }
+      .fft-grid { grid-template-columns: 1fr; }
+      .header-meta { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="course-tag">INF4705 / INF7105 — Traitement d'images</div>
+  <h1>Travail pratique 2<br><em>On s'amuse en fréquences</em></h1>
+  <div class="header-meta">
+    <span><span class="muted">Cours</span><strong>INF4705 / INF7105</strong></span>
+    <span><span class="muted">Session</span><strong>Hiver 2026</strong></span>
+  </div>
+</header>
+
+<section id="intro">
+  <h2><span class="sec-num">§ 1</span> Partie 1: Images hybrides </h2>
+  <p> La méthode présenté dans l'article de SIGGRAPH permet d'obtenir une image hybride dont le sens change selon la distance de l'observateur.
+    La méthode consiste à combiner une image à basse fréquence avec une image à haute fréquence. L'image à basse fréquence est obtenue
+    en filtrant les hautes fréquence de l'image en appliquant un filtre gaussien sur elle. L'image à haute fréquence est obtenue en appliquant le filtre gaussien sur l'image,
+    puis, en soustrayant l'image initial avec l'image filtré. Ainsi, l'image à haute fréquence devrais être perceptible de proche et celle de basse fréquence devrais
+    l'être de loin.</p>
+</section>
+
+<section id="paire1">
+  <h2><span class="sec-num">§ 2</span> Einstein / Marilyn </h2>
+  <div class="params-box">
+    <div class="params-title">Paramètres retenus</div>
+    <div class="params-row">
+      <div class="param"><span class="param-key">σ_bas (Marilyn)</span><span class="param-val">16</span></div>
+      <div class="param"><span class="param-key">σ_haut (Einstein)</span><span class="param-val">8</span></div>
+    </div>
+  </div>
+  <div class="img-grid cols-3">
+    <div class="img-cell">
+      <img src="./images/Marilyn_Einstein_low_Marilyn.png" alt="Marilyn Monroe basses fréquences" />
+      <div class="img-label">Basses fréq. — Marilyn</div>
+    </div>
+    <div class="img-cell">
+      <img src="./images/Marilyn_Einstein_high_Einstein.png" alt="Albert Einstein hautes fréquences" />
+      <div class="img-label">Hautes fréq. — Einstein</div>
+    </div>
+    <div class="img-cell">
+      <img src="./images/Marilyn_Einstein_hybrid2.png" alt="Image hybride Einstein Marilyn" />
+      <div class="img-label">Image hybride (Deuxième version)</div>
+    </div>
+  </div>
+  <p> Résultat pour l'image hybride de Marilyn et Einstein avec les valeurs de σ les plus optimales que j'ai pu trouver. On peut bien voir les éléments distinctifs
+  d'Einstein comme ses rides et sa moustache de proche, mais lorsque l'on s'éloigne, Einstein disparait pour laisser place à Marilyn.
+  Après plusieurs expérimentation, j'ai trouvé que des sigma de 20 et 10 donnaient le meilleur résultat possible, mais après avoir complété les piles gaussienne et laplacienne, j'ai remarqué d'un sigma de 16 donnait le meilleur flou pour
+   l'image à basse fréquence et qu'un sigma de 8 faisait resortir le plus de détails de l'image à haute fréquence. </p>
+  <p class="fig-caption"><strong>Figure 1.</strong> Paire Einstein / Marilyn. De près : Einstein De loin : Marilyn</p>
+</section>
+
+<section id="paire2">
+  <h2><span class="sec-num">§ 3</span> Paire personnelle — Lion / Chat </h2>
+  <div class="params-box">
+    <div class="params-title">Paramètres retenus</div>
+    <div class="params-row">
+      <div class="param"><span class="param-key">σ_bas (Lion)</span><span class="param-val">6</span></div>
+      <div class="param"><span class="param-key">σ_haut (Chat)</span><span class="param-val">4</span></div>
+    </div>
+  </div>
+  <div class="img-grid cols-3">
+    <div class="img-cell">
+      <img src="./images/Lion_Chat_low_Lion.png" alt="Lion basses fréquences" />
+      <div class="img-label">Basses fréq. — Lion</div>
+    </div>
+    <div class="img-cell">
+      <img src="./images/Lion_Chat_high_Chat.png" alt="Chat hautes fréquences" />
+      <div class="img-label">Hautes fréq. — Chat</div>
+    </div>
+    <div class="img-cell">
+      <img src="./images/Lion_Chat_hybrid.png" alt="Image hybride Lion Chat" />
+      <div class="img-label">Image hybride</div>
+    </div>
+  </div>
+  <p> Résultat pour l'image hybride avec les images personnelle avec des sigmas de 6 et 4 trouvés après plusireurs essaies. Je suis allé avec une image de chat et de lion sans aucune raison particulière.
+  Comme pour Einstein/Marilyn, on peut bien voir les éléments du chat comme ses yeux et ses oreilles de proche alors que le lion est seulement de loin. </p>
+  <p class="fig-caption"><strong>Figure 2.</strong> Paire Lion / Chat. </p>
+  <div class="callout">
+    <div class="callout-title">Sources des images</div>
+    <p> Image du chat: <a href="https://www.peakpx.com/en/hd-wallpaper-desktop-ksywk"> https://www.peakpx.com/en/hd-wallpaper-desktop-ksywk </a> </p>
+    Image du lion: <a href="https://www.1stdibs.com/art/photography/black-white-photography/shane-russeck-40x60-lion-portrait-black-white-lion-photography-photograph-signed-art/id-a_16089592/">
+    https://www.1stdibs.com/art/photography/black-white-photography/shane-russeck-40x60-lion-portrait-black-white-lion-photography-photograph-signed-art/id-a_16089592/ </a>
+  </div>
+</section>
+
+<section id="freq">
+  <h2><span class="sec-num">§ 4</span> Analyse fréquentielle détaillée </h2>
+  <div class="fft-grid">
+    <div class="fft-cell">
+      <img src="./images/Marilyn_Einstein_low_Marilyn.png" alt="Marilyn filtrée passe-bas" />
+      <div class="fft-label">Marilyn — domaine spatial</div>
+    </div>
+    <div class="fft-cell">
+      <img src="./images/Marilyn_Einstein_high_Einstein.png" alt="Einstein filtré passe-haut" />
+      <div class="fft-label">Einstein — domaine spatial</div>
+    </div>
+    <div class="fft-cell">
+      <img src="./images/Marilyn_Einstein_hybrid.png" alt="Image hybride Einstein Marilyn" />
+      <div class="fft-label">Hybride — domaine spatial</div>
+    </div>
+    <div class="fft-cell dark full-width">
+      <img src="./images/Marilyn_Einstein_comparaison.png" alt="FFT Marilyn" style="width: 80%; max-width: 700px; max-height: none; display: block; margin: 0 auto;" />
+      <div class="fft-label">FFT Marilyn — pic central</div>
+    </div>
+  </div>
+  <p class="fig-caption"><strong>Figure 3.</strong> Analyse fréquentielle Einstein/Marilyn. Le spectre hybride combine un pic central (Marilyn) et un anneau (Einstein), occupant des bandes disjointes.</p>
+</section>
+
+<section id="piles">
+  <h2><span class="sec-num">§ 5</span> Partie 2 - Piles gaussiennes et laplaciennes</h2>
+  <h3>5.1 Piles sur « Lincoln et Gala » de Dalí</h3>
+
+  <div class="img-grid">
+    <div class="img-cell">
+      <img src="./images/lincoln.jpg" alt="Lincoln et Gala — Dalí" style="width:100%;max-height:600px;object-fit:contain;display:block;background:#222;" />
+      <div class="img-label">Image originale — Lincoln et Gala (Dalí)</div>
+    </div>
+  </div>
+  <div class="img-grid cols-2 piles">
+    <div class="img-cell">
+      <img src="./images/lincoln_gaussian_stack.png" alt="Pile gaussienne Lincoln" />
+      <div class="img-label">Pile Gaussienne</div>
+      <div class="img-sublabel">σ = 2, 4, 8, 16, 32, 64</div>
+    </div>
+    <div class="img-cell">
+      <img src="./images/lincoln_laplacian_stack.png" alt="Pile laplacienne Lincoln" />
+      <div class="img-label">Pile Laplacienne</div>
+      <div class="img-sublabel">Détails extraits par niveau</div>
+    </div>
+  </div>
+  <p class="fig-caption"><strong>Figure 4.</strong> Piles gaussienne et laplacienne sur « Lincoln et Gala » de Dalí.</p>
+  <ul class="obs-list">
+    <li> <strong> Pile Gaussienne :</strong> L'image devient de plus en plus floue plus on augmente le sigma. On peut voir qu'à partir de 16, les détails de la femme ont complètement disparu et on ne voit seulement Lincoln. </li>
+    <li> <strong> Pile Laplacienne :</strong> Cette pile représente les détails perdus entre chaque niveau de la pile gaussienne, on peut remarqué que les détails de l'image augmente progressivement
+    à chaque niveau de la pile jusqu'au niveau de sigma=8. Après ce niveau, l'image devient de seulement plus floue. Cela est du au fait que la pile se base sur les images déjà floues
+    de la gaussienne. </li>
+  </ul>
+
+  <h3>5.2 Piles sur l'image hybride Marilyn/Einstein</h3>
+  <div class="img-grid">
+    <div class="img-cell">
+      <img src="./images/Marilyn_Einstein_hybrid.png" alt="Image hybride Marilyn/Einstein" style="width:100%;max-height:600px;object-fit:contain;display:block;background:#222;" />
+      <div class="img-label">Image originale (Première version) — Hybride Marilyn / Einstein</div>
+    </div>
+  </div>
+  <div class="img-grid cols-2 piles">
+    <div class="img-cell">
+      <img src="./images/hybrid_gaussian_stack.png" alt="Pile gaussienne hybride" />
+      <div class="img-label">Pile Gaussienne — Hybride</div>
+      <div class="img-sublabel">σ = 2, 4, 8, 16, 32</div>
+    </div>
+    <div class="img-cell">
+      <img src="./images/hybrid_laplacian_stack.png" alt="Pile laplacienne hybride" />
+      <div class="img-label">Pile Laplacienne — Hybride</div>
+      <div class="img-sublabel">Séparation fréquentielle visible</div>
+    </div>
+  </div>
+  <p class="fig-caption"><strong>Figure 5.</strong> Piles gaussienne et laplacienne de l'image hybride Marilyn/Einstein.</p>
+  <ul class="obs-list">
+    <li><strong>Pile gaussienne : Cette pile utilise la première version de l'image hybribe ayant des sigmas de 20/10. Comme pour le cas de l'image de lincoln, lorque qu'on floue l'image
+    Einstein disparait jusqu'à ce que seulement Marilyn soit visible. Comme mentionné dans la partie 1, la pile résultante m'a fait réaliser q'un sigma de 16 sur les base fréquences aura un meilleur
+    impact sur la visibilité de Marilyn.</strong>  </li>
+    <li><strong>Pile laplacienne : Utilise aussi la première version de l'image hybribe ayant des sigmas de 20/10. Similairement, cette pile m'a fait réaliser q'un sigma de 8
+    sur les hautes fréquences aura un meilleur impact sur la visibilité d'Einstein lorsque vue de proche. </strong> </li>
+
+  </ul>
+</section>
+
+<section id="partie3">
+  <h2>
+    <span class="sec-num">§ 6</span>
+    Partie 3 — Mélange par piles laplaciennes
+  </h2>
+
+  <h3>6.1 La « pommange »</h3>
+  <p>
+    La pommange est obtenue en fusionnant une pomme (moitié gauche) et une orange (moitié
+    droite) via un masque binaire vertical lissé par une pile gaussienne.
+  </p>
+  <div class="img-grid cols-3">
+    <div class="img-cell">
+      <img src="./images/apple.jpeg" alt="Pomme originale" />
+      <div class="img-label">Image A — Pomme</div>
+    </div>
+    <div class="img-cell">
+      <img src="./images/orange.jpeg" alt="Orange originale" />
+      <div class="img-label">Image B — Orange</div>
+    </div>
+    <div class="img-cell">
+      <img src="./images/apple_orange_blend.png" alt="Pommange résultat" />
+      <div class="img-label">Résultat — Pommange</div>
+    </div>
+  </div>
+  <p class="fig-caption"><strong>Figure 6.</strong> Mélange pomme / orange par piles laplaciennes avec masque vertical.</p>
+  <div class="img-grid cols-2 piles">
+    <div class="img-cell">
+      <img src="./images/blending_comparison.png" alt="Comparaison des niveaux de mélange pomme-orange" />
+      <div class="img-label">Comparaison des niveaux</div>
+      <div class="img-sublabel">Contribution de chaque pile à la fusion</div>
+    </div>
+    <div class="img-cell">
+      <img src="./images/blending_process.png" alt="Illustration du procédé de mélange pomme-orange" />
+      <div class="img-label">Illustration du procédé</div>
+      <div class="img-sublabel">Piles laplaciennes et masque à chaque niveau</div>
+    </div>
+  </div>
+  <p class="fig-caption"><strong>Figure 7.</strong> Décomposition détaillée du mélange pomme/orange.</p>
+  <ul class="obs-list">
+  </ul>
+
+  <h3>6.2 Mélange avec masque irrégulier — Phare / Océan</h3>
+  <p>
+    Pour illustrer la puissance des masques irréguliers, une photographie de phare et une photographie d'océan ont été fusionnées à l'aide d'un masque non-linéaire épousant la ligne d'horizon et la silhouette du phare.
+  </p>
+  <div class="img-grid cols-2">
+    <div class="img-cell">
+      <img src="./images/Lighthouse.jpg" alt="Phare original" />
+      <div class="img-label">Image A — Phare</div>
+    </div>
+    <div class="img-cell">
+      <img src="./images/Ocean.jpg" alt="Océan original" />
+      <div class="img-label">Image B — Océan</div>
+    </div>
+  </div>
+  <div class="img-grid cols-2 piles">
+    <div class="img-cell">
+      <img src="./images/lighthouse_ocean_blend.png" alt="Résultat fusion phare océan" />
+      <div class="img-label">Résultat — Phare / Océan</div>
+      <div class="img-sublabel">Masque irrégulier lissé</div>
+    </div>
+    <div class="img-cell">
+      <img src="./images/lighthouse_ocean_comparison.png" alt="Comparaison niveaux phare océan" />
+      <div class="img-label">Comparaison des niveaux</div>
+      <div class="img-sublabel">Décomposition multi-échelle</div>
+    </div>
+  </div>
+  <p class="fig-caption"><strong>Figure 8.</strong> Mélange phare / océan avec masque irrégulier.</p>
+
+  <h3>6.3 Illustration détaillée du procédé</h3>
+  <div class="img-grid">
+    <div class="img-cell process-cell">
+      <img src="./images/lighthouse_ocean_process.png" alt="Illustration du procédé phare océan" class="process-img" />
+      <div class="img-label">Procédé complet — Phare / Océan</div>
+      <div class="img-sublabel">Piles laplaciennes A et B · Pile gaussienne du masque · Reconstruction</div>
+    </div>
+  </div>
+  <p class="fig-caption"><strong>Figure 9.</strong> Illustration détaillée du procédé de mélange pour la paire phare/océan.</p>
+  <p>
+    L'algorithme réussi avec succès de faire le phare à sur l'image de l'océan. L'image résultant reste tout de même irréaliste et il est évident que le phare
+    a été ajouté digitalement. Le ciel et l'eau des deux images originales sont d'un bleu très différent et les nuages sont coupés. J'aurais dû choisir de meilleur image ou bien
+    amélioré mon masque irrégulier afin que l'image résultante soit plus réaliste.
+  </p>
+</section>
+<section>
+  <h2><span class="sec-num">§ 7</span> Utilisation de l'IA</h2>
+
+  <p> L'IA a été utilisé pour générer ce rapport. Le modèle utilisé était CLaudeAI. Tout le format visuel dont les titres des sections ainsi que les descriptions d'images ont été
+  généré par l'intéligence artificielle. Cependant, les explications des processus et des résultats n'ont pas été généré, mais plutôt écrit manuellement.</p>
+
+  </section>
+
+
+<section id="refs">
+  <h2><span class="sec-num">§ 8</span> Références</h2>
+  <ul class="ref-list">
+    <li data-ref="[1]">Oliva, A., Torralba, A., &amp; Schyns, P. G. (2006). <em>Hybrid images.</em> ACM Transactions on Graphics (SIGGRAPH), 25(3), 527–532.</li>
+    <li data-ref="[2]">Burt, P. J., &amp; Adelson, E. H. (1983). <em>A multiresolution spline with application to image mosaics.</em> ACM Transactions on Graphics, 2(4), 217–236.</li>
+    <li data-ref="[3]">Gonzalez, R. C., &amp; Woods, R. E. (2018). <em>Digital Image Processing</em> (4th ed.). Pearson.</li>
+    <li data-ref="[4]">SciPy — <code>scipy.ndimage.gaussian_filter</code>.</li>
+    <li data-ref="[5]"><p> Image du chat: <a href="https://www.peakpx.com/en/hd-wallpaper-desktop-ksywk"> https://www.peakpx.com/en/hd-wallpaper-desktop-ksywk </a> </p></li>
+    <li data-ref="[5]">Image du lion: <a href="https://www.1stdibs.com/art/photography/black-white-photography/shane-russeck-40x60-lion-portrait-black-white-lion-photography-photograph-signed-art/id-a_16089592/">
+    https://www.1stdibs.com/art/photography/black-white-photography/shane-russeck-40x60-lion-portrait-black-white-lion-photography-photograph-signed-art/id-a_16089592/ </a></li>
+    <li data-ref="[5]"><p> Image de l'océan: <a href="https://www.americanoceans.org/facts/biggest-oceans-and-seas/"> https://www.americanoceans.org/facts/biggest-oceans-and-seas/</a> </p></li>
+    <li data-ref="[5]"><p> Image du phare: <a href="https://mainelighthousemuseum.com/boon-island-lighthouse.html"> https://mainelighthousemuseum.com/boon-island-lighthouse.html </a> </p></li>
+  </ul>
+</section>
+
+<footer>
+  <span>INF4705 / INF7105 — TP2</span>
+  <span>Hiver 2026</span>
+</footer>
+</body>
+</html>
